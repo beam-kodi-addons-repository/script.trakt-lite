@@ -7,7 +7,7 @@ from resources.lib.service import traktService
 from resources.lib.utilities import createError, checkIfNewVersion
 from resources.lib.kodiUtilities import setSetting, getSetting
 
-__addon__ = xbmcaddon.Addon('script.trakt')
+__addon__ = xbmcaddon.Addon('script.trakt-lite')
 __addonversion__ = __addon__.getAddonInfo('version')
 __addonid__ = __addon__.getAddonInfo('id')
 kodilogging.config()

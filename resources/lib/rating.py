@@ -11,7 +11,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__addon__ = xbmcaddon.Addon("script.trakt")
+__addon__ = xbmcaddon.Addon("script.trakt-lite")
 
 def ratingCheck(media_type, items_to_rate, watched_time, total_time):
     """Check if a video should be rated and if so launches the rating dialog"""

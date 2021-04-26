@@ -4,7 +4,7 @@ import xbmcaddon
 from resources.lib.kodiUtilities import notification, setSetting, getString
 import logging
 
-__addon__ = xbmcaddon.Addon("script.trakt")
+__addon__ = xbmcaddon.Addon("script.trakt-lite")
 
 LATER_BUTTON = 201
 NEVER_BUTTON = 202

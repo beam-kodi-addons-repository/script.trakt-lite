@@ -13,15 +13,15 @@ from sys import version_info
 from json import loads, dumps
 
 # read settings
-__addon__ = xbmcaddon.Addon('script.trakt')
+__addon__ = xbmcaddon.Addon('script.trakt-lite')
 __addonversion__ = __addon__.getAddonInfo('version')
 
 logger = logging.getLogger(__name__)
 
 
 class traktAPI(object):
-    __client_id = "d4161a7a106424551add171e5470112e4afdaf2438e6ef2fe0548edc75924868"
-    __client_secret = "b5fcd7cb5d9bb963784d11bbf8535bc0d25d46225016191eb48e50792d2155c0"
+    __client_id = "bb554a98bd6372b0fd004175b4c239238b85ea991eafd5e055b43e5989355de6"
+    __client_secret = "2ed096d77f68c356d58c9dfe620eb02113910077e90757071d42701c2e2b0857"
 
     def __init__(self, force=False):
         logger.debug("Initializing.")

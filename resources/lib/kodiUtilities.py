@@ -12,7 +12,7 @@ from resources.lib import utilities
 
 
 # read settings
-__addon__ = xbmcaddon.Addon('script.trakt')
+__addon__ = xbmcaddon.Addon('script.trakt-lite')
 
 logger = logging.getLogger(__name__)
 

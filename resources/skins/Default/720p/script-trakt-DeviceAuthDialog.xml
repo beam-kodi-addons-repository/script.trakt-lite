@@ -31,7 +31,7 @@
 				<posy>15</posy>
 				<width>490</width>
 				<height>25</height>
-				<label>$ADDON[script.trakt 32153]</label>
+				<label>$ADDON[script.trakt-lite 32153]</label>
 				<align>right</align>
 				<aligny>center</aligny>
 				<font>font14</font>
@@ -111,7 +111,7 @@
 				<height>40</height>
 				<align>center</align>
 				<aligny>center</aligny>
-				<label>$ADDON[script.trakt 32155]</label>
+				<label>$ADDON[script.trakt-lite 32155]</label>
 				<font>font12_title</font>
 				<textcolor>AA000000</textcolor>
 				<texturenofocus>button-nofo.png</texturenofocus>
@@ -124,7 +124,7 @@
 				<height>40</height>
 				<align>center</align>
 				<aligny>center</aligny>
-				<label>$ADDON[script.trakt 32156]</label>
+				<label>$ADDON[script.trakt-lite 32156]</label>
 				<textcolor>AA000000</textcolor>
 				<texturenofocus>button-nofo.png</texturenofocus>
 				<texturefocus>button-fo.png</texturefocus>				

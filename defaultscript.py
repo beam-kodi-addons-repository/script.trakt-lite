@@ -5,7 +5,7 @@ from resources.lib import script
 
 logger = logging.getLogger(__name__)
 
-__addon__ = xbmcaddon.Addon("script.trakt")
+__addon__ = xbmcaddon.Addon("script.trakt-lite")
 
 def Main():
     script.run()
