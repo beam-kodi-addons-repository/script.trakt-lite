@@ -240,7 +240,8 @@ class traktAPI(object):
     def addToHistory(self, mediaObject):
         with Trakt.configuration.oauth.from_response(self.authorization):
             # don't try this call it may cause multiple watches
-            result = Trakt['sync/history'].add(mediaObject)
+            time.sleep(1) # Rate Limit protection (1 request per second)
+            result = Trakt['sync/history'].add(mediaObject, exceptions=True)
         return result
 
     def addToWatchlist(self, mediaObject):
