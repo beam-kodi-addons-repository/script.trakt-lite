@@ -143,30 +143,3 @@ class SyncMovies():
 
                 self.sync.traktapi.addRating(moviesRatings)
 
-            kodiMoviesToUpdate = utilities.compareMovies(updateKodiTraktMovies, updateKodiKodiMovies, kodiUtilities.getSettingAsBool(
-                "scrobble_fallback"), restrict=True, rating=True)
-            if len(kodiMoviesToUpdate) == 0:
-                self.sync.UpdateProgress(toPercent, line1='', line2=kodiUtilities.getString(32169))
-                logger.debug("[Movies Sync] Kodi movie ratings are up to date.")
-            else:
-                logger.debug("[Movies Sync] %i movie(s) ratings will be updated in Kodi" % len(kodiMoviesToUpdate))
-
-                self.sync.UpdateProgress(fromPercent, line1='', line2=kodiUtilities.getString(32170) % len(kodiMoviesToUpdate))
-                # split movie list into chunks of 50
-                chunksize = 50
-                chunked_movies = utilities.chunks([{"jsonrpc": "2.0", "id": i, "method": "VideoLibrary.SetMovieDetails",
-                                                    "params": {"movieid": kodiMoviesToUpdate[i]['movieid'],
-                                                               "userrating": kodiMoviesToUpdate[i]['rating']}} for i in range(len(kodiMoviesToUpdate))],
-                                                  chunksize)
-                i = 0
-                x = float(len(kodiMoviesToUpdate))
-                for chunk in chunked_movies:
-                    if self.sync.IsCanceled():
-                        return
-                    i += 1
-                    y = ((i / x) * (toPercent-fromPercent)) + fromPercent
-                    self.sync.UpdateProgress(int(y), line2=kodiUtilities.getString(32171) % ((i) * chunksize if (i) * chunksize < x else x, x))
-                    kodiUtilities.kodiJsonRequest(chunk)
-
-                self.sync.UpdateProgress(toPercent, line2=kodiUtilities.getString(32172) % len(kodiMoviesToUpdate))
-

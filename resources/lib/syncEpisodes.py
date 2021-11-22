@@ -277,41 +277,6 @@ class SyncEpisodes:
                 self.sync.UpdateProgress(fromPercent, line1='', line2=kodiUtilities.getString(32182) % len(traktShowsToUpdate['shows']))
                 self.sync.traktapi.addRating(traktShowsToUpdate)
 
-            kodiShowsUpdate = utilities.compareEpisodes(updateKodiTraktShows, updateKodiKodiShows, kodiUtilities.getSettingAsBool(
-                "scrobble_fallback"), restrict=True, rating=True)
-            if len(kodiShowsUpdate['shows']) == 0:
-                self.sync.UpdateProgress(toPercent, line1='', line2=kodiUtilities.getString(32173))
-                logger.debug("[Episodes Sync] Kodi episode ratings are up to date.")
-            else:
-                logger.debug("[Episodes Sync] %i show(s) will have episode ratings added in Kodi" % len(kodiShowsUpdate['shows']))
-                for s in ["%s" % self.__getShowAsString(s, short=True) for s in kodiShowsUpdate['shows']]:
-                    logger.debug("[Episodes Sync] Episodes updated: %s" % s)
-
-                episodes = []
-                for show in kodiShowsUpdate['shows']:
-                    for season in show['seasons']:
-                        for episode in season['episodes']:
-                            episodes.append({'episodeid': episode['ids']['episodeid'], 'rating': episode['rating']})
-
-                # split episode list into chunks of 50
-                chunksize = 50
-                chunked_episodes = utilities.chunks([{"jsonrpc": "2.0", "id": i, "method": "VideoLibrary.SetEpisodeDetails",
-                                        "params": {"episodeid": episodes[i]['episodeid'],
-                                                   "userrating": episodes[i]['rating']}} for i in range(len(episodes))],
-                                        chunksize)
-                i = 0
-                x = float(len(episodes))
-                for chunk in chunked_episodes:
-                    if self.sync.IsCanceled():
-                        return
-                    i += 1
-                    y = ((i / x) * (toPercent-fromPercent)) + fromPercent
-                    self.sync.UpdateProgress(int(y), line1='', line2=kodiUtilities.getString(32174) % ((i) * chunksize if (i) * chunksize < x else x, x))
-
-                    kodiUtilities.kodiJsonRequest(chunk)
-
-                self.sync.UpdateProgress(toPercent, line2=kodiUtilities.getString(32175) % len(episodes))
-
 
     def __getShowAsString(self, show, short=False):
         p = []
