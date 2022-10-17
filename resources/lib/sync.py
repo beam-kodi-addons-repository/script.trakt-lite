@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 
+import logging
+
 import xbmc
 import xbmcgui
-import logging
-from resources.lib import syncEpisodes
-from resources.lib import syncMovies
+from resources.lib import syncEpisodes, syncMovies
 from resources.lib.kodiUtilities import getSettingAsBool
 
 progress = xbmcgui.DialogProgress()
 logger = logging.getLogger(__name__)
+
 
 class Sync():
     def __init__(self, show_progress=False, run_silent=False, library="all", api=None):
@@ -21,13 +22,29 @@ class Sync():
             logger.debug("Sync is being run silently.")
         self.sync_on_update = getSettingAsBool('sync_on_update')
         self.notify = getSettingAsBool('show_sync_notifications')
-        self.notify_during_playback = not (xbmc.Player().isPlayingVideo() and getSettingAsBool("hide_notifications_playback"))
+        self.notify_during_playback = not getSettingAsBool("hide_notifications_playback")
 
     def __syncCheck(self, media_type):
+        return self.__syncWatchedCheck(media_type) or self.__syncPlaybackCheck(media_type) or self.__syncRatingsCheck()
+
+    def __syncPlaybackCheck(self, media_type):
         if media_type == 'movies':
             return getSettingAsBool('trakt_movie_playcount')
         else:
             return getSettingAsBool('trakt_episode_playcount')
+
+    def __syncRatingsCheck(self):
+        return getSettingAsBool('trakt_sync_ratings')
+
+    def __syncWatchedCheck(self, media_type):
+        if media_type == 'movies':
+            return getSettingAsBool('trakt_movie_playcount') or getSettingAsBool('kodi_movie_playcount')
+        else:
+            return getSettingAsBool('trakt_episode_playcount') or getSettingAsBool('kodi_episode_playcount')
+
+    @property
+    def show_notification(self):
+        return not self.show_progress and self.sync_on_update and self.notify and (self.notify_during_playback or not xbmc.Player().isPlayingVideo())
 
     def sync(self):
         logger.debug("Starting synchronization with Trakt.tv")
@@ -36,7 +53,8 @@ class Sync():
             if self.library in ["all", "movies"]:
                 syncMovies.SyncMovies(self, progress)
             else:
-                logger.debug("Movie sync is being skipped for this manual sync.")
+                logger.debug(
+                    "Movie sync is being skipped for this manual sync.")
         else:
             logger.debug("Movie sync is disabled, skipping.")
 
@@ -45,14 +63,15 @@ class Sync():
                 if not (self.__syncCheck('movies') and self.IsCanceled()):
                     syncEpisodes.SyncEpisodes(self, progress)
                 else:
-                    logger.debug("Episode sync is being skipped because movie sync was canceled.")
+                    logger.debug(
+                        "Episode sync is being skipped because movie sync was canceled.")
             else:
-                logger.debug("Episode sync is being skipped for this manual sync.")
+                logger.debug(
+                    "Episode sync is being skipped for this manual sync.")
         else:
             logger.debug("Episode sync is disabled, skipping.")
 
         logger.debug("[Sync] Finished synchronization with Trakt.tv")
-
 
     def IsCanceled(self):
         if self.show_progress and not self.run_silent and progress.iscanceled():
@@ -63,5 +82,20 @@ class Sync():
 
     def UpdateProgress(self, *args, **kwargs):
         if self.show_progress and not self.run_silent:
-            kwargs['percent'] = args[0]
-            progress.update(**kwargs)
+
+            line1 = ""
+            line2 = ""
+            line3 = ""
+
+            if 'line1' in kwargs:
+                line1 = kwargs["line1"]
+
+            if 'line2' in kwargs:
+                line2 = kwargs["line2"]
+
+            if 'line3' in kwargs:
+                line3 = kwargs["line3"]
+
+            percent = args[0]
+            message = f'{line1}\n{line2}\n{line3}'
+            progress.update(percent, message)
